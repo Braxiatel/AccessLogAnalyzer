@@ -27,6 +27,12 @@ configuration = {
 
 
 def main(new_config):
+    """
+    Main procedure for log analyzing: 1) Validate new configuration file. 2) Find latest log file. 3) Check if the
+    latest log file is already analyzed. 4) Process file if it not analyzed yet. 5) Write a html report for processed
+    file.
+    :param new_config: path to configuration file
+    """
     config = check_configuration(new_config)
     latest_log = find_latest_log(folder=config.get("LOG_DIR"))
     if latest_log:
@@ -46,7 +52,7 @@ def find_latest_log(folder: str) -> namedtuple:
     :return: log filename and its date
     """
     try:
-        file_pattern = re.compile(r'^nginx-access-ui.log-(\d+)(\.gz)?$')  # regex = r'^nginx-access-ui.log-(\d+)(\.gz)?$'
+        file_pattern = re.compile(r'^nginx-access-ui.log-(\d+)(\.gz)?$')
         dates_dict = dict()
         result = namedtuple('log_file', ['date', 'filename'])
         for file in os.listdir(folder):
@@ -62,6 +68,12 @@ def find_latest_log(folder: str) -> namedtuple:
 
 
 def is_file_analyzed(log_date: int, config: dict) -> bool:
+    """
+    Checks whether latest file is already analyzed.
+    :param log_date: latest log file timestamp
+    :param config: configuration as a dict
+    :return: result of the check as a bool value
+    """
     log_date = str(log_date)
     return os.path.exists(os.path.join(config.get("REPORT_DIR"),
                                        f'report-{log_date[:4]}.{log_date[4:6]}.{log_date[6:8]}.html'))
@@ -76,6 +88,11 @@ def _validate_paths_in_config(new_config: dict):
 
 
 def check_configuration(configuration_file: str) -> dict:
+    """
+    Check that provided configuration file is valid.
+    :param configuration_file: path to configuration file
+    :return: configuration converted into dict
+    """
     new_config = configuration.copy()
     try:
         if configuration_file:
@@ -184,7 +201,7 @@ if __name__ == "__main__":
     while True:
         try:
             main(args.config)
-            sleep(15)
+            sleep(86400)
         except KeyboardInterrupt:
             sys.exit("\nGoodbye!")
         except ValueError as e:
