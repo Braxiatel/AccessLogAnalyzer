@@ -1,0 +1,6 @@
+{
+    "REPORT_SIZE": 1000,
+    "REPORT_DIR": "./tests/test_report",
+    "LOG_DIR": "./tests/test_log/valid_dir",
+    "TEST_DIR": "./tests"
+}
