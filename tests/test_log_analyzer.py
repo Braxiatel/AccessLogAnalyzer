@@ -29,7 +29,7 @@ class TestLogLocation(unittest.TestCase):
         self.assertEqual(found_file.filename, 'nginx-access-ui.log-20160631')
 
     def check_empty_log_directory(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             test = log_analyzer.find_latest_log(os.path.join(test_config.get('LOG_DIR'), "./empty_dir"))
             self.assertEqual(test, None)
 
@@ -45,7 +45,7 @@ class TestLogAnalyzing(unittest.TestCase):
 
     def test_many_errors(self):
         test_file = os.path.join('plain_dir', 'nginx-access-ui.log-20160631')
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             test = log_analyzer.handle_file(log_file=test_file, config=test_config)
 
     def test_result_generator(self):
@@ -58,7 +58,7 @@ class TestLogAnalyzing(unittest.TestCase):
 class TestConfiguration(unittest.TestCase):
 
     def test_missing_configuration_file(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             log_analyzer.main("nonexistent.config")
 
     def test_config_changed(self):
@@ -68,7 +68,7 @@ class TestConfiguration(unittest.TestCase):
 
     def test_invalid_config(self):
         config_file = os.path.join(test_config.get("TEST_DIR"), "test_invalid_config.json")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(RuntimeError):
             result = log_analyzer.check_configuration(configuration_file=config_file)
 
 

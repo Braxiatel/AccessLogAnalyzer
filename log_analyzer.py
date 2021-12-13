@@ -63,7 +63,7 @@ def find_latest_log(folder: str) -> namedtuple:
         result_tuple = result(max(dates_dict.keys()), dates_dict[max(dates_dict.keys())])
         logging.info(f"Found latest file: {result_tuple}")
         return result_tuple
-    except ValueError:
+    except RuntimeError:
         logging.info("Unable to find matching log file.")
 
 
@@ -83,7 +83,7 @@ def _validate_paths_in_config(new_config: dict):
     config_with_paths = {key: new_config[key] for key in new_config.keys() & {'REPORT_DIR', 'LOG_DIR'}}
     for k, v in config_with_paths.items():
         if not os.path.exists(v):
-            raise ValueError(f"Provided directory {k}: {v} does not exist. Exiting.")
+            raise RuntimeError(f"Provided directory {k}: {v} does not exist. Exiting.")
 
 
 def check_configuration(configuration_file: str) -> dict:
@@ -105,10 +105,10 @@ def check_configuration(configuration_file: str) -> dict:
                 _validate_paths_in_config(new_config)
                 logging.info("Changing configuration is completed.")
         else:
-            raise ValueError(f"{configuration_file} is invalid")
+            raise RuntimeError(f"{configuration_file} is invalid")
         return new_config
     except FileNotFoundError:
-        raise ValueError(f"Provided configuration file {configuration_file} is not found. Exiting.")
+        raise RuntimeError(f"Provided configuration file {configuration_file} is not found. Exiting.")
 
 
 def _read_file_into_data(log_file: str):
@@ -141,7 +141,7 @@ def handle_file(log_file: str, config: dict) -> Generator[dict, None, None]:
     processed_lines = sum(data['processed'] for data in _initial_gen(log_file=log_file, config=config))
     try:
         if (total_count - processed_lines) / total_count * 100 > 20:
-            raise ValueError(f"Too many errors in log parsing: "
+            raise RuntimeError(f"Too many errors in log parsing: "
                              f"{(total_count - processed_lines) / total_count * 100} percent. Exiting.")
     except ZeroDivisionError:
         logging.error(f"Log file {log_file} is probably empty.")
@@ -203,7 +203,7 @@ if __name__ == "__main__":
             sleep(86400)
         except KeyboardInterrupt:
             sys.exit("\nGoodbye!")
-        except ValueError as e:
+        except RuntimeError as e:
             logging.error(f"An error occurred: {e}")
             sys.exit("\nExit due to an error.")
         except Exception as e:
