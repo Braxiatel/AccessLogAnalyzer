@@ -44,8 +44,7 @@ def main(new_config):
         return
     if not is_file_analyzed(latest_log.date, config):
         logging.info(f"Analyzing the latest log file {latest_log.filename}.")
-        log_file = f"{config.get('LOG_DIR')}/{latest_log.filename}"
-        report_ready_result = handle_file(read_file_into_data, log_file, config)
+        report_ready_result = handle_file(read_file_into_data, latest_log.filename, config)
         create_report(report_ready_result, latest_log.date, config)
     else:
         logging.info("Latest log is already analyzed.")
@@ -142,6 +141,7 @@ def handle_file(file_generator, log_file: str, config: dict) -> Generator[dict, 
     :return: generator with results of analysis
     """
     # Checking for errors in parsing. Exiting if results contain more than 20 percent of errors
+    log_file = f"{config.get('LOG_DIR')}/{log_file}"
     total_count = sum(data['line_count'] for data in file_generator(log_file=log_file))
     processed_lines = sum(data['processed'] for data in file_generator(log_file=log_file))
     try:
