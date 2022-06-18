@@ -1,44 +1,43 @@
 ###### Mini Log Analyzer
 _________________
 
-Небольшой скрипт для обработки NGINX access логов. При запуске скрипт обрабатывает последний лог в ``LOG_DIR``. Строка в лог файле имеет следующий вид:
+Small script to process NGINX access logs. The latest log file in the ``LOG_DIR`` is going to be processed upon 
+running the script. Log file line should have the following format:
 
 _1.136.218.80 -  - [30/Jun/2017:03:28:22 +0300] "GET /export/appinstall_raw/2017-06-30/ HTTP/1.0" 200 25652 "-" "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.12) Gecko/2009070611 Firefox/3.0.12 (.NET CLR 3.5.30729)" "-" "-" "-" 0.004_
 
-В результате анализа скрипт выводит статистику по данному лог файлу в html репорт в папку ``REPORT_DIR``. 
+As the result of the analysis script outputs the following statistic metrics into the html report in ``REPORT_DIR`` 
+directory.
 
-В статистике отображены:
-- **count** - сĸольĸо раз встречается URL, абсолютное значение
-- **count_perc** - сĸольĸо раз встречается URL, в процентнах относительно общего числа запросов
-- **time_sum** - суммарный $request_time для данного URL'а, абсолютное значение
-- **time_perc** - суммарный $request_time для данного URL'а, в процентах относительно общего $request_time всех запросов
-- **time_avg** - средний $request_time для данного URL'а
-- **time_max** - маĸсимальный $request_time для данного URL'а
-- **time_med** - медиана $request_time для данного URL'а
+- **count** - how many times URL appears in the log, absolute value
+- **count_perc** - how many times URL appears in the log, percentage
+- **time_sum** - sum $request_time for specific URL, absolute value
+- **time_perc** - sum $request_time for specific URL, percentage
+- **time_avg** - average $request_time for specific URL
+- **time_max** - max $request_time for specific URL
+- **time_med** - mean $request_time for specific URL
 
-За объём данных в отчёте отвечает переменная ``REPORT_SIZE`` - в отчёт попадает указанное количество URL'ов 
-с наибольшим суммарным временем обработĸи **time_sum**.
+Report size can be limited by ``REPORT_SIZE`` variable. Final report contains ``REPORT_SIZE`` number of URLs with max 
+ **time_sum**.
 
-###### Запуск скрипта
+###### Running the script
 ______________
 
-Для запуска скрипта необходим python 3.9 и выше. Сторонних библиотек не требуется. Скрипту можно передать свой файл 
-конфигураций, желательно в формате json. В файле конфигурации можно указывать следующие параметры:
+In order to run the script, Python 3.9 and higher is recommended. Third-party libraries are not required. 
+Custom configuration file can be passed to the script. Configuration file might include the following parameters:
 
- - "REPORT_SIZE": Ограничение объёма данных в отчёте.
- - "REPORT_DIR": Папка, куда скрипт будет складывать отчёты.
- - "LOG_DIR": Папка, где скрипт будет искать логи.
- - "LOG_FILE": Файл куда буду писаться логи в процессе работы скрипта. Дефолтное значение ``None``, 
-   логи пишутся в stdout.
+ - "REPORT_SIZE": Report size limit.
+ - "REPORT_DIR": Directory for reports.
+ - "LOG_DIR": Directory with logs.
+ - "LOG_FILE": File for the logs. Default value is ``None``, logs are written down into stdout.
 
-Путь к конфигу можно передавать скрипту через параметр ``--config`` или ``-с``. Конфиг должен храниться в формате **json**.
-Пример запуска скрипта:
+Path to the config file is passed with ``--config`` or ``-с`` variable.
+Example:
 
 `$ python log_analyzer --config ./config.json`
 
-###### Запуск тестов
+###### Running the tests
 _____________
-Для скрипта написаны юнит тесты с помощью библиотеки unittest. В папке ``tests`` находятся файлы и директории необходимые 
-для тестирования, сами тесты находятся в файле ``test_log_analyzer.py``. Пример запуска тестов:
+Unit tests and all test data can be found in ``tests`` folder. Tests can be run like this:
 
 `$ python -m unittest`
